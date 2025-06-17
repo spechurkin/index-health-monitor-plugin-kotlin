@@ -1,0 +1,85 @@
+apply plugin: "kotlin"
+apply plugin: "opensearch.opensearchplugin"
+apply plugin: "opensearch.pluginzip"
+
+def pluginName = 'index-health-monitor'
+def pluginDescription = 'REST plugin showing full DB health'
+def packagePath = 'org.opensearch.indexhealthmonitor'
+def pathToPlugin = 'org.opensearch.indexhealthmonitor.IndexHealthMonitorPlugin'
+
+java {
+    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_21
+}
+
+kotlin {
+    jvmToolchain(21)
+}
+
+opensearchplugin {
+    name = pluginName
+    description = pluginDescription
+    classname = pathToPlugin
+    licenseFile = rootProject.file('LICENSE.txt')
+    noticeFile = rootProject.file('NOTICE.txt')
+}
+
+test.enabled = false
+loggerUsageCheck.enabled = false
+dependencyLicenses.enabled = false
+validateNebulaPom.enabled = false
+
+tasks.register("preparePluginPathDirs") {
+    mustRunAfter clean
+    doLast {
+        def newPath = pathToPlugin.replace(".", "/")
+        mkdir "src/main/kotlin/$newPath"
+        mkdir "src/test/kotlin/$newPath"
+    }
+}
+
+buildscript {
+    ext {
+        kotlinVersion = "1.9.24"
+        opensearch_group = "org.opensearch"
+        opensearch_version = System.getProperty("opensearch.version", "3.0.0")
+    }
+
+    repositories {
+        mavenLocal()
+        maven { url "https://aws.oss.sonatype.org/content/repositories/snapshots" }
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+        classpath "org.opensearch.gradle:build-tools:${opensearch_version}"
+    }
+}
+
+publishing {
+    publications {
+        pluginZip(MavenPublication) { publication ->
+            groupId = packagePath
+            artifactId = pluginName
+            pom {
+                name = pluginName
+                description = pluginDescription
+                version = '1.0.0'
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        name = "hololight17"
+                        url = "https://github.com/spechurkin/index-health-monitor-kotlin"
+                    }
+                }
+            }
+        }
+    }
+}
