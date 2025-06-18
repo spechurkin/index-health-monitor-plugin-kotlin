@@ -55,7 +55,7 @@ class IndexHealthMonitorAction : AbstractCatAction() {
 
     override fun routes(): List<Route> {
         return listOf(
-            Route(GET, "/nn2/metrics"),
+            Route(GET, "/nn2/metrics/"),
             Route(GET, "/nn2/metrics/clusterName"),
             Route(GET, "/nn2/metrics/taskMaxWaitingTime"),
             Route(GET, "/nn2/metrics/status"),
