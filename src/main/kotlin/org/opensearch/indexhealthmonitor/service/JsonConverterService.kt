@@ -94,7 +94,7 @@ class JsonConverterService {
         table.addCell("Index Health Status JSON")
         table.endHeaders()
 
-        if (metric == null) {
+        if (metric.isNullOrEmpty()) {
             table.startRow()
             table.addCell(mapToJson(map))
             table.endRow()
