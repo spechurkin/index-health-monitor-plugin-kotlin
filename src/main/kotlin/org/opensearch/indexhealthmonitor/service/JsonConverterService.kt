@@ -39,71 +39,73 @@ import java.io.StringWriter
 import java.time.Instant
 
 class JsonConverterService {
-    private fun mapToJson(map: Map<String, Any>): String {
-        val writer = StringWriter()
-        val factory = JsonFactory()
-        val generator = factory.createGenerator(writer)
+    companion object {
+        fun getMessageFormatted(message: String?): String {
+            return pairToJson("message", message)
+        }
 
-        generator.writeStartObject()
+        fun getIndexHealthStatus(response: ClusterHealthResponse, metric: String?): Table {
+            val map: MutableMap<String, Any> = HashMap()
+            map["clusterName"] = response.clusterName
+            map["currentDate"] = Instant.now()
+            map["taskMaxWaitingTime"] = response.taskMaxWaitingTime
+            map["status"] = response.status.name
+            map["activeShards"] = response.activeShards
+            map["relocatingShards"] = response.relocatingShards
+            map["initializingShards"] = response.initializingShards
+            map["unassignedShards"] = response.unassignedShards
+            map["delayedUnassignedShards"] = response.delayedUnassignedShards
+            map["numberOfNodes"] = response.numberOfNodes
+            map["numberOfDataNodes"] = response.numberOfDataNodes
+            map["activePrimaryShards"] = response.activePrimaryShards
+            map["activeShardsPercent"] = response.activeShardsPercent
 
-        for ((key, value) in map) {
+            val table = Table()
+            table.startHeaders()
+            table.addCell("Index Health Status JSON")
+            table.endHeaders()
+
+            if (metric.isNullOrEmpty()) {
+                table.startRow()
+                table.addCell(mapToJson(map))
+                table.endRow()
+            } else if (map.containsKey(metric)) {
+                table.startRow()
+                table.addCell(pairToJson(metric, map[metric]))
+                table.endRow()
+            }
+
+            return table
+        }
+
+        private fun mapToJson(map: Map<String, Any>): String {
+            val writer = StringWriter()
+            val factory = JsonFactory()
+            val generator = factory.createGenerator(writer)
+
+            generator.writeStartObject()
+
+            for ((key, value) in map) {
+                generator.writeStringField(key, value.toString())
+            }
+
+            generator.writeEndObject()
+            generator.close()
+
+            return writer.toString()
+        }
+
+        private fun pairToJson(key: String, value: Any?): String {
+            val writer = StringWriter()
+            val factory = JsonFactory()
+            val generator = factory.createGenerator(writer)
+
+            generator.writeStartObject()
             generator.writeStringField(key, value.toString())
+            generator.writeEndObject()
+            generator.close()
+
+            return writer.toString()
         }
-
-        generator.writeEndObject()
-        generator.close()
-
-        return writer.toString()
-    }
-
-    private fun pairToJson(key: String, value: Any?): String {
-        val writer = StringWriter()
-        val factory = JsonFactory()
-        val generator = factory.createGenerator(writer)
-
-        generator.writeStartObject()
-        generator.writeStringField(key, value.toString())
-        generator.writeEndObject()
-        generator.close()
-
-        return writer.toString()
-    }
-
-    fun getMessageFormatted(message: String?): String {
-        return pairToJson("message", message)
-    }
-
-    fun getIndexHealthStatus(response: ClusterHealthResponse, metric: String?): Table {
-        val map: MutableMap<String, Any> = HashMap()
-        map["clusterName"] = response.clusterName
-        map["currentDate"] = Instant.now()
-        map["taskMaxWaitingTime"] = response.taskMaxWaitingTime
-        map["status"] = response.status.name
-        map["activeShards"] = response.activeShards
-        map["relocatingShards"] = response.relocatingShards
-        map["initializingShards"] = response.initializingShards
-        map["unassignedShards"] = response.unassignedShards
-        map["delayedUnassignedShards"] = response.delayedUnassignedShards
-        map["numberOfNodes"] = response.numberOfNodes
-        map["numberOfDataNodes"] = response.numberOfDataNodes
-        map["activePrimaryShards"] = response.activePrimaryShards
-        map["activeShardsPercent"] = response.activeShardsPercent
-
-        val table = Table()
-        table.startHeaders()
-        table.addCell("Index Health Status JSON")
-        table.endHeaders()
-
-        if (metric.isNullOrEmpty()) {
-            table.startRow()
-            table.addCell(mapToJson(map))
-            table.endRow()
-        } else if (map.containsKey(metric)) {
-            table.startRow()
-            table.addCell(pairToJson(metric, map[metric]))
-            table.endRow()
-        }
-
-        return table
     }
 }

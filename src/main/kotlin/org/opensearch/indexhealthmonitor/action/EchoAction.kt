@@ -34,6 +34,7 @@ package org.opensearch.indexhealthmonitor.action
 
 import org.opensearch.common.Table
 import org.opensearch.core.rest.RestStatus
+import org.opensearch.indexhealthmonitor.service.JsonConverterService.Companion.getMessageFormatted
 import org.opensearch.rest.BaseRestHandler.RestChannelConsumer
 import org.opensearch.rest.BytesRestResponse
 import org.opensearch.rest.RestChannel
@@ -42,11 +43,8 @@ import org.opensearch.rest.RestRequest
 import org.opensearch.rest.RestRequest.Method.GET
 import org.opensearch.rest.action.cat.AbstractCatAction
 import org.opensearch.transport.client.node.NodeClient
-import org.opensearch.indexhealthmonitor.service.JsonConverterService
 
 class EchoAction : AbstractCatAction() {
-
-    private val service = JsonConverterService()
 
     override fun getName(): String {
         return "echo_action"
@@ -67,7 +65,7 @@ class EchoAction : AbstractCatAction() {
                 BytesRestResponse(
                     RestStatus.OK,
                     "application/json",
-                    service.getMessageFormatted(message)
+                    getMessageFormatted(message)
                 )
             )
         }

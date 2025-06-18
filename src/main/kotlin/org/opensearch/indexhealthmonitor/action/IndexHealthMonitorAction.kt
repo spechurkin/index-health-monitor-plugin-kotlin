@@ -35,6 +35,7 @@ package org.opensearch.indexhealthmonitor.action
 import org.opensearch.action.admin.cluster.health.ClusterHealthRequest
 import org.opensearch.action.admin.cluster.health.ClusterHealthResponse
 import org.opensearch.common.Table
+import org.opensearch.indexhealthmonitor.service.JsonConverterService.Companion.getIndexHealthStatus
 import org.opensearch.rest.BaseRestHandler.RestChannelConsumer
 import org.opensearch.rest.RestChannel
 import org.opensearch.rest.RestHandler.Route
@@ -45,10 +46,8 @@ import org.opensearch.rest.action.RestResponseListener
 import org.opensearch.rest.action.cat.AbstractCatAction
 import org.opensearch.rest.action.cat.RestTable
 import org.opensearch.transport.client.node.NodeClient
-import org.opensearch.indexhealthmonitor.service.JsonConverterService
 
 class IndexHealthMonitorAction : AbstractCatAction() {
-    private val service = JsonConverterService()
 
     override fun getName(): String {
         return "index_health_monitor_action"
@@ -82,7 +81,7 @@ class IndexHealthMonitorAction : AbstractCatAction() {
                     override fun buildResponse(response: ClusterHealthResponse?): RestResponse {
                         return RestTable.buildResponse(
                             response?.let {
-                                service.getIndexHealthStatus(
+                                getIndexHealthStatus(
                                     it,
                                     metric
                                 )
