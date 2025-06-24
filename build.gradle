@@ -7,11 +7,6 @@ def pluginDescription = 'REST plugin showing full DB health'
 def packagePath = 'org.opensearch.indexhealthmonitor'
 def pathToPlugin = 'org.opensearch.indexhealthmonitor.IndexHealthMonitorPlugin'
 
-java {
-    targetCompatibility = JavaVersion.VERSION_21
-    sourceCompatibility = JavaVersion.VERSION_21
-}
-
 kotlin {
     jvmToolchain(21)
 }
@@ -20,6 +15,7 @@ opensearchplugin {
     name = pluginName
     description = pluginDescription
     classname = pathToPlugin
+    version = '1.0.0'
     licenseFile = rootProject.file('LICENSE.txt')
     noticeFile = rootProject.file('NOTICE.txt')
 }
@@ -41,7 +37,6 @@ tasks.register("preparePluginPathDirs") {
 buildscript {
     ext {
         kotlinVersion = "1.9.24"
-        opensearch_group = "org.opensearch"
         opensearch_version = System.getProperty("opensearch.version", "3.0.0")
     }
 
@@ -70,13 +65,13 @@ publishing {
                 licenses {
                     license {
                         name = "The Apache License, Version 2.0"
-                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
                     }
                 }
                 developers {
                     developer {
                         name = "hololight17"
-                        url = "https://github.com/spechurkin/index-health-monitor-kotlin"
+                        url = "https://github.com/spechurkin/"
                     }
                 }
             }
