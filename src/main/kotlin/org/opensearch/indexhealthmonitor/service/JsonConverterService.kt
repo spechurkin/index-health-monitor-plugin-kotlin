@@ -45,20 +45,21 @@ class JsonConverterService {
         }
 
         fun getIndexHealthStatus(response: ClusterHealthResponse, metric: String?): Table {
-            val map: MutableMap<String, Any> = HashMap()
-            map["clusterName"] = response.clusterName
-            map["currentDate"] = Instant.now()
-            map["taskMaxWaitingTime"] = response.taskMaxWaitingTime
-            map["status"] = response.status.name
-            map["activeShards"] = response.activeShards
-            map["relocatingShards"] = response.relocatingShards
-            map["initializingShards"] = response.initializingShards
-            map["unassignedShards"] = response.unassignedShards
-            map["delayedUnassignedShards"] = response.delayedUnassignedShards
-            map["numberOfNodes"] = response.numberOfNodes
-            map["numberOfDataNodes"] = response.numberOfDataNodes
-            map["activePrimaryShards"] = response.activePrimaryShards
-            map["activeShardsPercent"] = response.activeShardsPercent
+            val map = mapOf(
+                "clusterName" to response.clusterName,
+                "currentDate" to Instant.now(),
+                "taskMaxWaitingTime" to response.taskMaxWaitingTime,
+                "status" to response.status.name,
+                "activeShards" to response.activeShards,
+                "relocatingShards" to response.relocatingShards,
+                "initializingShards" to response.initializingShards,
+                "unassignedShards" to response.unassignedShards,
+                "delayedUnassignedShards" to response.delayedUnassignedShards,
+                "numberOfNodes" to response.numberOfNodes,
+                "numberOfDataNodes" to response.numberOfDataNodes,
+                "activePrimaryShards" to response.activePrimaryShards,
+                "activeShardsPercent" to response.activeShardsPercent
+            )
 
             val table = Table()
             table.startHeaders()
